@@ -17,6 +17,7 @@ except gpiozero.BadPinFactory as e:
     auth_led = None
     print(e)
 
+
 async def led_blink(led, interval, count):
     if led is None:
         return
@@ -26,38 +27,52 @@ async def led_blink(led, interval, count):
         led.off()
         await asyncio.sleep(interval)
 
+
 print(f"{datetime.datetime.now().isoformat()} Start Program")
 print(f"{datetime.datetime.now().isoformat()} Connecting to Google Sheets")
 scopes = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive'
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
 ]
 credentials = Credentials.from_service_account_file(
-    config.CREDENTIAL_FILE,
-    scopes=scopes
+    config.CREDENTIAL_FILE, scopes=scopes
 )
 gc = gspread.authorize(credentials)
 spreadsheet_url = config.SPREADSHEET_URL
 spreadsheet = gc.open_by_url(spreadsheet_url)
-sheet_ic_log = spreadsheet.worksheet('IC Touch Log')
-sheet_program_log = spreadsheet.worksheet('Program Log')
+sheet_ic_log = spreadsheet.worksheet("IC Touch Log")
+sheet_program_log = spreadsheet.worksheet("Program Log")
 print(f"{datetime.datetime.now().isoformat()} Connected to Google Sheets")
-sheet_program_log.append_row([datetime.datetime.now().isoformat(), 'Start Program'])
+sheet_program_log.append_row([datetime.datetime.now().isoformat(), "Start Program"])
 
 last_use = {}
+
+
 def on_connect(tag):
     print(tag)
-    if tag.type == 'Type3Tag':
-        date = datetime.datetime.now().isoformat()
+    if tag.type == "Type3Tag":
+        date = datetime.datetime.now()
         idm = hexlify(tag.identifier).decode().upper()
-        if idm not in last_use or last_use[idm] < datetime.datetime.now() - datetime.timedelta(seconds=10):
-            print(f'Date:{date} IDm:{idm}')
-            sheet_ic_log.append_row([date, idm])
+        print(f"Date:{date.isoformat()} IDm:{idm}")
+        if idm not in last_use or (
+            datetime.datetime.now() - last_use[idm]
+        ) > datetime.timedelta(seconds=10):
+            sheet_ic_log.append_row([date.isoformat(), idm])
             last_use[idm] = date
-            asyncio.run(led_blink(auth_led, 0.3, 5))
+            print("-> Data saved")
+            asyncio.run(led_blink(auth_led, 0.05, 5))
+        else:
+            print("-> Interval too short")
     return True
 
+
 print(f"{datetime.datetime.now().isoformat()} Start NFC")
-with nfc.ContactlessFrontend("usb") as clf:
-    while True:
-        clf.connect(rdwr={"on-connect": on_connect})
+try:
+    with nfc.ContactlessFrontend("usb") as clf:
+        while True:
+            clf.connect(rdwr={"on-connect": on_connect})
+except Exception as e:
+    print(f"{datetime.datetime.now().isoformat()} Error: {e}")
+    sheet_program_log.append_row([datetime.datetime.now().isoformat(), f"Error: {e}"])
+    asyncio.run(led_blink(state_led, 0.3, 3))
+    asyncio.run(led_blink(auth_led, 0.3, 3))
