@@ -2,9 +2,11 @@ beautifulsoup4==4.12.3
 cachetools==5.3.3
 certifi==2024.6.2
 charset-normalizer==3.3.2
+colorzero==2.0
 google==3.0.0
 google-auth==2.30.0
 google-auth-oauthlib==1.2.0
+gpiozero==2.0.1
 gspread==6.1.2
 idna==3.7
 libusb1==3.1.0
@@ -18,5 +20,6 @@ pyserial==3.5
 requests==2.32.3
 requests-oauthlib==2.0.0
 rsa==4.9
+setuptools==70.1.0
 soupsieve==2.5
 urllib3==2.2.2
