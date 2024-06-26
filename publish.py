@@ -30,7 +30,7 @@ class MyCardReader(object):
         bc86 = nfc.tag.tt3.BlockCode(0x86, service=0)
         tag.write_without_encryption([sc_write], [bc86], CKV)
 
-        MC = b"\xFF\xFF\xFF\x01\x07\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+        MC = b"\xFF\xFF\xFF\x01\x07\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
         bc88 = nfc.tag.tt3.BlockCode(0x88, service=0)
         tag.write_without_encryption([sc_write], [bc88], MC)
 
@@ -48,7 +48,7 @@ class MyCardReader(object):
         bc00 = nfc.tag.tt3.BlockCode(0x00, service=0)
         tag.write_without_encryption([sc_write], [bc00], user)
         
-        MC = b"\xFF\xFF\xFF\x01\x07\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00"
+        MC = b"\xFF\xFF\xFF\x01\x07\x01\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00"
         bc88 = nfc.tag.tt3.BlockCode(0x88, service=0)
         tag.write_without_encryption([sc_write], [bc88], MC)
         
