@@ -6,7 +6,7 @@ config_sample.pyをコピーしてconfig.pyを作成し、必要な情報を記�
 ```sh
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt # nfcpyの設定が必要なことがある
 python main.py
 ```
 
