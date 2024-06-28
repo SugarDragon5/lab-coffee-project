@@ -58,7 +58,7 @@ class MyCardReader(object):
         if args.mc:
             MC = bytes.fromhex(args.mc)
         else:
-            MC = b"\xFF\xFF\xFF\x01\x07\x01\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00"
+            MC = b"\xFF\xFF\x00\x01\x07\x01\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00"
         bc88 = nfc.tag.tt3.BlockCode(0x88, service=0)
         tag.write_without_encryption([sc_write], [bc88], MC)
         
